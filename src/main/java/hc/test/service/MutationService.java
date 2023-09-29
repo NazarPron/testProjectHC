@@ -22,7 +22,6 @@ public class MutationService {
     private final ScriptEngine engine;
     private final BlockingQueue<String> documentQueue;
     private final BlockingQueue<String> documentToStoreQueue;
-
     @Value("${script.function}")
     private String function;
 
@@ -34,7 +33,7 @@ public class MutationService {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    @Async
+    @Async("procExec")
     public void run() {
         while (true) {
             String doc = null;
@@ -53,8 +52,6 @@ public class MutationService {
     public String exec(String json) throws ScriptException, NoSuchMethodException {
         Invocable inv = (Invocable) engine;
         return (String) inv.invokeFunction(function, json);
-
-
     }
 
 }

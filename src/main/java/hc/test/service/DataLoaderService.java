@@ -29,9 +29,8 @@ public class DataLoaderService {
         this.docQueue = docQueue.getDocumentQueue();
     }
 
-
     @EventListener(ApplicationReadyEvent.class)
-    @Async
+    @Async("procExec")
     public void loadData() {
         loadData("https://api.logicahealth.org/HevelianTestSandbox/open/Patient");
     }

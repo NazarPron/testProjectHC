@@ -28,15 +28,20 @@ public class MongoDocumentWriterService {
     public MongoDocumentWriterService(DocumentToStoreQueue documentToStoreQueue, MongoTemplate mongoTemplate) {
         this.documentToStoreQueue = documentToStoreQueue.getDocumentToStoreQueue();
         this.mongoTemplate = mongoTemplate;
+        clear();
+    }
+
+
+    private void clear(){
+        mongoTemplate.dropCollection("ent");
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    @Async
+    @Async("procExec")
     public void write() {
         mongoTemplate.getCollectionNames().forEach(System.out::println);
         List<Document> documents = new ArrayList<>();
         while (true) {
-
             try {
                 String document = documentToStoreQueue.poll(1, TimeUnit.SECONDS);
                 if(document!=null) {
@@ -59,10 +64,10 @@ public class MongoDocumentWriterService {
 
     private void write(List<Document> documents) {
         if(documents.size()>0) {
-            BulkOperations bulkInsertion = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Document.class, "ent");
+            BulkOperations bulkInsertion = mongoTemplate.bulkOps(BulkOperations.BulkMode.UNORDERED, Document.class, "ent2");
             documents.forEach(bulkInsertion::insert);
             BulkWriteResult bulkWriteResult = bulkInsertion.execute();
-            bulkWriteResult.getInsertedCount();
+            log.debug("Files created"+bulkWriteResult.getInsertedCount());
         }
 
     }

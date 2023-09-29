@@ -9,7 +9,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Configuration
 public class DocumentQueue {
-
     @Bean
     public BlockingQueue<String> getDocumentQueue() {
         return new LinkedBlockingQueue<>();
